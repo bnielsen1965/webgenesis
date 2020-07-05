@@ -10,6 +10,36 @@ class ClientSocket {
 		this.socket.onmessage = options.onMessage || this.onMessage.bind(this);
 	}
 
+  getState () {
+    switch (this.socket.readyState) {
+      case this.socket.CONNECTING:
+        return 'connecting';
+
+      case this.socket.OPEN:
+        return 'open';
+
+      case this.socket.CLOSING:
+        return 'closing';
+
+      case this.socket.CLOSED:
+        return 'closed';
+
+      default:
+        return 'unknown';
+    }
+  }
+
+  isOpen () {
+    return this.socket.OPEN === this.socket.readyState;
+  }
+
+  close () {
+    this.socket.close();
+    setTimeout(() => {
+      if ([this.socket.OPEN, this.socket.CLOSING].includes(this.socket.readyState)) this.socket.terminate();
+    }, 10000);
+  }
+
 	send (message) {
 		this.socket.send(message);
 	}

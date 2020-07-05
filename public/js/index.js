@@ -1,13 +1,41 @@
 
 let cs;
-window.addEventListener('load', (event) => {
-	console.log('START');
-	cs = new ClientSocket({ onOpen, onError, onClose, onMessage });
+let pinging = false;
+UI.ready(event => {
+  UI.clickAction('websocket', websocketClick);
+  UI.clickAction('ping', pingClick);
 });
+
+
+function websocketClick (ev) {
+  if (cs && cs.isOpen()) {
+    cs.close();
+    delete cs;
+  }
+  else if (cs && !cs.isOpen()) {
+    appendError(`Client socket state ${cs.getState()}`);
+  }
+  else {
+    cs = new ClientSocket({ onOpen, onError, onClose, onMessage });
+      console.log(cs.socket.readyState)
+  }
+}
+
+
+function pingClick (ev) {
+  pinging = !pinging;
+  UI.elementHTML('ping', (pinging ? 'Stop Ping' : 'Start Ping'));
+  if (pinging) {
+    appendMessage('Start ping');
+    ping();
+    return;
+  }
+  appendMessage('Stop ping');
+}
 
 function onOpen () {
 	appendMessage('WebSocket open');
-	ping();
+  UI.elementHTML('websocket', 'Close Socket');
 }
 
 function onError () {
@@ -15,7 +43,10 @@ function onError () {
 }
 
 function onClose () {
+  delete cs;
+  cs = null;
 	appendMessage('WebSocket closed');
+  UI.elementHTML('websocket', 'Open Socket');
 }
 
 function onMessage (message) {
@@ -30,7 +61,6 @@ function onMessage (message) {
 	switch (data.action) {
 		case 'pong':
 		appendMessage('Ping reply ' + JSON.stringify(data));
-		setTimeout(ping, 3000);
 		return;
 
 		default:
@@ -40,13 +70,16 @@ function onMessage (message) {
 }
 
 function ping () {
-	cs.send(JSON.stringify({ action: 'ping', text: 'echo this' }));
+  if (!pinging) return;
+  if (cs && cs.isOpen()) cs.send(JSON.stringify({ action: 'ping', text: 'echo this' }));
+  else appendError('Client socket is not open');
+  setTimeout(ping, 3000);
 }
 
 function appendMessage (message) {
-	document.getElementById('messages').innerHTML += message + '<br>';
+	UI.elementAppendHTML('messages', message + '<br>');
 }
 
 function appendError (error) {
-	document.getElementById('errors').innerHTML += error + '<br>';
+	UI.elementAppendHTML('errors', error + '<br>');
 }

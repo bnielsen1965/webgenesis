@@ -23,10 +23,14 @@
 	margin: 1em 0;
 	font-weight: bold;
 	color: blue;
+  max-height: 10em;
+  overflow: auto;
 }
 
 #errors {
 	margin: 1em 0;
+  max-height: 10em;
+  overflow: auto;
 }
 
 .error {
