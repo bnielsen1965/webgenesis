@@ -16,7 +16,7 @@ function websocketClick (ev) {
     appendError(`Client socket state ${cs.getState()}`);
   }
   else {
-    cs = new ClientSocket({ onOpen, onError, onClose, onMessage });
+    cs = new ClientSocket({ onOpen, onError, onClose, onMessage, tokenName: 'token' });
       console.log(cs.socket.readyState)
   }
 }

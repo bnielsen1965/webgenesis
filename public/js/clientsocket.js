@@ -1,8 +1,10 @@
 
 class ClientSocket {
 	constructor (options) {
-		let token = this.getCookie('token');
-		let protocols = [(token ? 'token_' + token : '')];
+    options = options || {};
+    let tokenName = options.tokenName || 'token';
+		let token = this.getCookie(tokenName);
+		let protocols = [(token ? `${tokenName}_${token}` : '')];
 		this.socket = new WebSocket((window.location.protocol === 'https:' ? 'wss' : 'ws') + '://' + window.location.host, protocols);
 		this.socket.onopen = options.onOpen || this.onOpen.bind(this);
 		this.socket.onerror = options.onError || this.onError.bind(this);

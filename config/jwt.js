@@ -4,5 +4,6 @@ module.exports = {
     algorithm: 'HS512',
     expiresIn: '1 days'
   },
-  key: 'supersecretprivatekey'
+  key: 'supersecretprivatekey',
+  tokenName: 'token'
 };
