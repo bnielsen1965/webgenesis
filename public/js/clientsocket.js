@@ -3,7 +3,7 @@ class ClientSocket {
 	constructor (options) {
     options = options || {};
     let tokenName = options.tokenName || 'token';
-		let token = this.getCookie(tokenName);
+		let token = ClientSocket.getCookie(tokenName);
 		let protocols = [(token ? `${tokenName}_${token}` : '')];
 		this.socket = new WebSocket((window.location.protocol === 'https:' ? 'wss' : 'ws') + '://' + window.location.host, protocols);
 		this.socket.onopen = options.onOpen || this.onOpen.bind(this);
@@ -62,7 +62,7 @@ class ClientSocket {
 		console.log('WebSocket message. ' + message);
 	}
 
-	getCookie (cname) {
+	static getCookie (cname) {
 	  let name = cname + "=";
 	  let decodedCookie = decodeURIComponent(document.cookie);
 	  let ca = decodedCookie.split(';');
